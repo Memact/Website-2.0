@@ -1,0 +1,1 @@
+For image names with _dark, these images are supposed to be used in dark mode of website. For _light, in light mode.
