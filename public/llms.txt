@@ -1,0 +1,36 @@
+# Memact — Compounding Personal Identity
+
+Memact is a decentralized, user-controlled identity protocol where approved things about a person accumulate naturally over time based on actual usage, without dashboard maintenance chores.
+
+## Tagline
+Your identity compounds naturally as you use apps, agents, and services.
+
+## Core Architectural Concepts
+
+1. **Active Address (e.g. john.memact.com)**
+   The user's personal address and public endpoint. Apps, friends, and services query this endpoint to request information or propose suggestions.
+
+2. **Compounding Identity (Humane Language)**
+   - Avoid legacy terms like "context packet", "identity graph", and "semantic infrastructure".
+   - Use simple terms: **things**, **stuff**, **suggestions**, **approvals**, **what was shared**, **what was learned**.
+   - Identity emerges naturally from observations and approvals instead of manual profile editing.
+
+3. **On-the-Spot Approvals**
+   - Services propose updates directly to the user in context.
+   - The user approves or rejects suggestions immediately via lightweight in-app prompts. No dashboard visit is required.
+
+4. **Lightweight Claimed Identity**
+   - Users can begin using Memact with just an email address (no password or setup wizard required).
+   - This creates a **Claimed Identity** that accumulates observations, approvals, and visibility rules.
+   - The user can later set a password to claim full control and upgrade to a **Managed Identity** to view all data.
+
+5. **Portal Navigation Tabs**
+   - **Inbox**: Missed approvals, unresolved suggestions, and items needing review.
+   - **Junk**: Low-quality, duplicate, or spam observations (e.g. "likes music", "uses the internet", "human").
+   - **You**: The approved stream of things about you.
+   - **Privacy**: Active connections, scopes, and app credentials.
+   - **Settings**: Handle configurations, profile details, and account security.
+
+6. **Context Access Protocol (CAP)**
+   - Task-specific, granular matching filters.
+   - Restricts raw profile queries. If a Music App asks "What should I play?", Memact matches only the "works out regularly" trait and hides unrelated data (e.g., "prefers long-form essays").
