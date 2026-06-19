@@ -112,8 +112,9 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const renderVisualFrame = () => {
-    switch (activeSection) {
+  const renderVisualFrame = (sectionIndex?: number) => {
+    const active = sectionIndex !== undefined ? sectionIndex : activeSection;
+    switch (active) {
       case 0: // Let your identity live in one place
         return (
           <div className="flex flex-col items-center justify-center h-full w-full space-y-4 animate-in fade-in duration-500">
@@ -484,9 +485,9 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
       {/* Split screen scrolling container */}
       <main className="flex-1 flex flex-col md:flex-row relative pt-[60px]">
         
-        {/* Left Visual Area (Sticky) */}
-        <div className="w-full md:w-1/2 h-[40vh] md:h-[calc(100vh-60px)] sticky top-[60px] flex items-center justify-center p-6 md:p-12 border-b md:border-b-0 md:border-r border-border/40 bg-background/50 backdrop-blur-sm z-30">
-          <div className="w-full max-w-sm aspect-square md:aspect-auto md:h-[380px] bg-card border border-border rounded-sm shadow-[0_8px_32px_rgba(0,0,0,0.01)] flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300">
+        {/* Left Visual Area (Sticky) - hidden on mobile */}
+        <div className="hidden md:flex w-full md:w-1/2 h-[calc(100vh-60px)] sticky top-[60px] items-center justify-center p-12 border-r border-border/40 bg-background/50 backdrop-blur-sm z-30">
+          <div className="w-full max-w-sm h-[380px] bg-card border border-border rounded-sm shadow-[0_8px_32px_rgba(0,0,0,0.01)] flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300">
             {renderVisualFrame()}
           </div>
         </div>
@@ -497,7 +498,7 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
             <section
               key={index}
               data-index={index}
-              className={`scroll-section min-h-[50vh] md:min-h-[calc(100vh-60px)] flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 transition-opacity duration-300 border-b border-border/10 last:border-b-0 ${
+              className={`scroll-section min-h-[60vh] md:min-h-[calc(100vh-60px)] flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 transition-opacity duration-300 border-b border-border/10 last:border-b-0 ${
                 activeSection === index ? 'opacity-100' : 'opacity-25'
               }`}
             >
@@ -511,6 +512,11 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
                   </p>
                 )}
                 
+                {/* Inline Visual Frame for Mobile only */}
+                <div className="flex md:hidden my-6 w-full max-w-[280px] aspect-square bg-card border border-border rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex-col justify-center items-center relative overflow-hidden">
+                  {renderVisualFrame(index)}
+                </div>
+
                 {/* CTA on the final step */}
                 {index === sections.length - 1 && (
                   <div className="pt-6 space-y-2.5 w-full">
