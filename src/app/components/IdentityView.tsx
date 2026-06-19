@@ -61,6 +61,12 @@ export function IdentityView({
   // Navigation / Views State
   const [view, setView] = useState<ViewMode>('inbox');
 
+  // Dynamic Document Title based on current tab
+  useEffect(() => {
+    const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+    document.title = `Memact | ${capitalize(view)}`;
+  }, [view]);
+
   // Input for adding new notes directly
   const [newEntryText, setNewEntryText] = useState('');
 

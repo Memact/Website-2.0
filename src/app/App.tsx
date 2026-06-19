@@ -30,6 +30,19 @@ export default function App() {
   const [initialEmail, setInitialEmail] = useState('');
   const [isClaimed, setIsClaimed] = useState(false);
 
+  // Dynamic Document Title based on current page
+  useEffect(() => {
+    if (page === 'landing') {
+      document.title = 'Memact | Home';
+    } else if (page === 'auth') {
+      document.title = authMode === 'login' ? 'Memact | Sign in' : 'Memact | Create account';
+    } else if (page === 'onboarding') {
+      document.title = 'Memact | Set up';
+    } else if (page === 'public') {
+      document.title = 'Memact | Profile';
+    }
+  }, [page, authMode]);
+
   // Global Record States
   const [username, setUsername] = useState('alex');
   const [fullName, setFullName] = useState('Alex Chen');
