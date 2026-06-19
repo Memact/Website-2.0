@@ -33,51 +33,51 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
   const sections = [
     {
       title: "Let your identity live in one place.",
-      subtitle: "Because you're more than another profile."
+      subtitle: ""
     },
     {
-      title: "Apps learn things independently.",
-      subtitle: "Fitness App: 'Works out regularly.' Reading App: 'Prefers long-form essays.' Friend: 'Funny.' They live in separate places."
+      title: "Apps learn things about you.",
+      subtitle: "A fitness app learns you work out. A reading app learns you read essays. A friend knows you are funny."
     },
     {
-      title: "Those learnings remain fragmented.",
-      subtitle: "None of it connects. It stays siloed in each service."
+      title: "None of it connects.",
+      subtitle: "Everything stays in separate places. The apps do not talk to each other."
     },
     {
-      title: "Let it compound instead.",
-      subtitle: "Your personal address: john.memact.com. All observations flow into one place."
+      title: "Bring it together.",
+      subtitle: "Get your own address: john.memact.com. Everything flows to one place."
     },
     {
-      title: "Apps propose suggestions.",
-      subtitle: "Everything arrives as suggestions. fitness: 'Works out regularly.' reading: 'Prefers long-form essays.' friend: 'Funny.'"
+      title: "Apps suggest updates.",
+      subtitle: "When apps learn something new, they send a suggestion to your address."
     },
     {
-      title: "You approve on the spot.",
-      subtitle: "No portal required. Fitness App proposes: 'Works out regularly.' You approve or reject immediately."
+      title: "You decide on the spot.",
+      subtitle: "Fitness App suggests: 'Works out regularly.' You approve or reject it immediately."
     },
     {
-      title: "Now it belongs to you.",
-      subtitle: "Approved contributions collect under your personal address."
+      title: "It belongs to you.",
+      subtitle: "Approved things are saved under your personal address."
     },
     {
       title: "Choose who sees what.",
-      subtitle: "Set visibility rules on your terms: Public, Friends, or Only me."
+      subtitle: "Make things public, share them with friends, or keep them only for yourself."
     },
     {
-      title: "Another app arrives.",
-      subtitle: "Music App asks: 'What should I play?' No raw profile access is granted."
+      title: "A new app arrives.",
+      subtitle: "A music app wants to know what music to play. It does not get access to your whole profile."
     },
     {
-      title: "Memact checks approved stuff.",
-      subtitle: "Finds 'Works out regularly'. Hides the essays and jokes."
+      title: "Memact shares only what is needed.",
+      subtitle: "It sees 'Works out regularly' is approved. It hides your essays and jokes."
     },
     {
-      title: "The music app adapts.",
-      subtitle: "A workout playlist, customized instantly, without access to your entire profile."
+      title: "The app adapts.",
+      subtitle: "The music app plays workout music instantly, without knowing anything else about you."
     },
     {
-      title: "Your identity compounds.",
-      subtitle: "john.memact.com grows naturally as you use services, without portals or maintenance chores."
+      title: "Your profile grows on its own.",
+      subtitle: "john.memact.com compiles things over time as you use apps. No setup, no chores."
     }
   ];
 
