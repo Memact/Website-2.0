@@ -22,8 +22,8 @@ export function Onboarding({ onBack, onComplete, isDark, onToggleDark, initialEm
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
-  const [nowFocus, setNowFocus] = useState('Learning how memory agents connect.');
-  const [preferences, setPreferences] = useState('Building Memact address protocol beta.');
+  const [nowFocus, setNowFocus] = useState('');
+  const [preferences, setPreferences] = useState('');
   
   // Loading states for Step 3
   const [simState, setSimState] = useState<'idle' | 'connecting' | 'success'>('idle');
