@@ -232,11 +232,17 @@ export function Auth({
                     required
                     disabled={loading}
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ''))}
+                    onChange={(e) => {
+                      let val = e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+                      if (val.includes('memact.com')) {
+                        val = val.split('memact.com')[0].replace(/\.+$/, '');
+                      }
+                      setUsername(val);
+                    }}
                     placeholder="alex"
-                    className="flex-1 text-sm bg-transparent outline-none text-foreground placeholder:text-muted-foreground/30 font-medium"
+                    className="flex-1 min-w-0 text-sm bg-transparent outline-none text-foreground placeholder:text-muted-foreground/30 font-mono font-medium"
                   />
-                  <span className="text-sm text-muted-foreground/50 select-none">.memact.com</span>
+                  <span className="text-sm text-muted-foreground/50 font-mono select-none shrink-0">.memact.com</span>
                 </div>
                 {checkingUsername && (
                   <span className="text-[10px] text-muted-foreground font-medium mt-1 flex items-center gap-1">
