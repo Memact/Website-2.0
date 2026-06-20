@@ -29,6 +29,21 @@ const DESIGN_TOKENS = {
 export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
   const [activeSection, setActiveSection] = useState(0);
   const [step5Approved, setStep5Approved] = useState<boolean | null>(null);
+  const [dimensions, setDimensions] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const sections = [
     {
@@ -83,8 +98,9 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
 
   useEffect(() => {
     const scrollContainer = document.getElementById('main-scroll-container');
+    const isMobilePortrait = dimensions.width < 768 && dimensions.height > dimensions.width;
     const observerOptions = {
-      root: window.innerWidth < 768 ? scrollContainer : null,
+      root: isMobilePortrait ? scrollContainer : null,
       rootMargin: '-45% 0px -45% 0px',
       threshold: 0.1,
     };
@@ -107,11 +123,12 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
     return () => {
       elements.forEach((el) => observer.unobserve(el));
     };
-  }, []);
+  }, [dimensions]);
 
   const handleRestart = useCallback(() => {
     const container = document.getElementById('main-scroll-container');
-    if (container && window.innerWidth < 768) {
+    const isMobilePortrait = window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+    if (container && isMobilePortrait) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -497,11 +514,11 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
       </nav>
 
       {/* Split screen scrolling container */}
-      <main id="main-scroll-container" className="flex-1 flex flex-col md:flex-row relative pt-[60px] h-[calc(100vh-60px)] md:h-auto md:overflow-y-visible overflow-y-auto snap-y snap-mandatory scroll-smooth">
+      <main id="main-scroll-container" className="flex-1 flex flex-col md:flex-row relative pt-[60px] h-[calc(100vh-60px)] landscape:h-auto md:h-auto md:overflow-y-visible landscape:overflow-y-visible overflow-y-auto snap-y snap-mandatory landscape:snap-none scroll-smooth">
         
         {/* Left Visual Area (Sticky) - hidden on mobile */}
         <div className="hidden md:flex w-full md:w-1/2 h-[calc(100vh-60px)] sticky top-[60px] items-center justify-center p-12 border-r border-border/40 bg-background/50 backdrop-blur-sm z-30">
-          <div className="w-full max-w-sm h-[380px] bg-card border border-border rounded-sm shadow-[0_8px_32px_rgba(0,0,0,0.01)] flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300">
+          <div className="w-full max-w-sm h-[380px] max-h-[calc(100vh-100px)] bg-card border border-border rounded-sm shadow-[0_8px_32px_rgba(0,0,0,0.01)] flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300">
             {renderVisualFrame()}
           </div>
         </div>
@@ -512,42 +529,44 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
             <section
               key={index}
               data-index={index}
-              className={`scroll-section h-[calc(100vh-60px)] md:min-h-[calc(100vh-60px)] md:h-auto flex flex-col justify-center items-center text-center md:text-left md:items-start px-6 md:px-16 py-0 transition-all duration-500 ease-out border-b border-border/10 last:border-b-0 snap-start snap-always ${
+              className={`scroll-section h-[calc(100vh-60px)] landscape:h-auto landscape:min-h-[calc(100vh-60px)] landscape:py-14 md:min-h-[calc(100vh-60px)] md:h-auto flex flex-col justify-center items-center text-center md:text-left md:items-start px-6 md:px-16 py-0 transition-all duration-500 ease-out border-b border-border/10 last:border-b-0 snap-start snap-always landscape:snap-none ${
                 activeSection === index ? 'opacity-100 scale-100 translate-y-0' : 'opacity-25 scale-95 translate-y-4 md:opacity-25 md:scale-100 md:translate-y-0'
               }`}
             >
-              <div className="max-w-md space-y-3 w-full flex flex-col items-center md:items-start">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-[1.15]">
-                  {section.title}
-                </h2>
-                {section.subtitle && (
-                  <p className="text-xs md:text-sm text-muted-foreground/80 leading-relaxed font-semibold">
-                    {section.subtitle}
-                  </p>
-                )}
+              <div className="max-w-md landscape:max-w-2xl md:max-w-md space-y-3 landscape:space-y-0 w-full flex flex-col landscape:flex-row items-center md:items-start landscape:justify-between landscape:gap-6">
+                <div className="flex-1 flex flex-col items-center landscape:items-start text-center landscape:text-left w-full">
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-[1.15]">
+                    {section.title}
+                  </h2>
+                  {section.subtitle && (
+                    <p className="text-xs md:text-sm text-muted-foreground/80 leading-relaxed font-semibold mt-2">
+                      {section.subtitle}
+                    </p>
+                  )}
+                  
+                  {/* CTA on the final step */}
+                  {index === sections.length - 1 && (
+                    <div className="pt-4 space-y-2 w-full max-w-[240px]">
+                      <button
+                        onClick={() => onNavigate('auth', 'signup')}
+                        className="w-full bg-foreground text-background py-3 text-xs font-bold hover:opacity-85 transition-opacity rounded-sm cursor-pointer shadow-xs"
+                      >
+                        Claim your address
+                      </button>
+                      <button
+                        onClick={handleRestart}
+                        className="w-full bg-secondary border border-border text-muted-foreground hover:text-foreground py-2.5 text-xs font-bold hover:bg-secondary/70 transition-all rounded-sm cursor-pointer"
+                      >
+                        Scroll to top
+                      </button>
+                    </div>
+                  )}
+                </div>
                 
                 {/* Inline Visual Frame for Mobile only */}
-                <div className="flex md:hidden my-4 w-full max-w-[280px] sm:max-w-[320px] aspect-square bg-card border border-border rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex-col justify-center items-center p-4 relative overflow-hidden">
+                <div className="flex md:hidden my-4 landscape:my-0 w-full max-w-[280px] sm:max-w-[320px] landscape:max-w-[220px] aspect-square landscape:aspect-[1.4] bg-card border border-border rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex-col justify-center items-center p-4 landscape:p-2.5 relative overflow-hidden shrink-0">
                   {renderVisualFrame(index)}
                 </div>
-
-                {/* CTA on the final step */}
-                {index === sections.length - 1 && (
-                  <div className="pt-4 space-y-2 w-full max-w-[240px]">
-                    <button
-                      onClick={() => onNavigate('auth', 'signup')}
-                      className="w-full bg-foreground text-background py-3 text-xs font-bold hover:opacity-85 transition-opacity rounded-sm cursor-pointer shadow-xs"
-                    >
-                      Claim your address
-                    </button>
-                    <button
-                      onClick={handleRestart}
-                      className="w-full bg-secondary border border-border text-muted-foreground hover:text-foreground py-2.5 text-xs font-bold hover:bg-secondary/70 transition-all rounded-sm cursor-pointer"
-                    >
-                      Scroll to top
-                    </button>
-                  </div>
-                )}
               </div>
             </section>
           ))}
