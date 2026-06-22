@@ -19,16 +19,8 @@ export function PublicProfile({
   fullName,
   entries,
 }: PublicProfileProps) {
-  const [previewMode, setPreviewMode] = useState<'public' | 'friend'>('public');
-
   // Filter entries based on visibility settings
-  const visibleEntries = entries.filter((e) => {
-    if (previewMode === 'public') {
-      return e.visibility === 'Public';
-    }
-    // 'friend' mode sees Public and Friends visibility
-    return e.visibility === 'Public' || e.visibility === 'Friends';
-  });
+  const visibleEntries = entries.filter((e) => e.visibility === 'Public');
 
   // Initials for avatar
   const initials = fullName
@@ -52,33 +44,18 @@ export function PublicProfile({
           <ArrowLeft size={13} /> Back to You
         </button>
         
-        {/* Preview Selector */}
-        <div className="flex items-center bg-secondary border border-border p-0.5 rounded-sm select-none">
-          <button
-            onClick={() => setPreviewMode('public')}
-            className={`text-[10px] font-bold px-2.5 py-1 rounded-xs transition-all ${
-              previewMode === 'public'
-                ? 'bg-background text-foreground shadow-xs'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Public View
-          </button>
-          <button
-            onClick={() => setPreviewMode('friend')}
-            className={`text-[10px] font-bold px-2.5 py-1 rounded-xs transition-all ${
-              previewMode === 'friend'
-                ? 'bg-background text-foreground shadow-xs'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Friend View
-          </button>
+        <div className="text-xs font-bold text-muted-foreground select-none uppercase tracking-wider">
+          Public Profile
         </div>
         
-        <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground font-semibold">
+        <a
+          href={`https://${username}.memact.com`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground font-semibold transition-colors"
+        >
           <Globe size={11} className="text-chart-2" /> {username}.memact.com
-        </div>
+        </a>
       </div>
 
       {/* Address Profile Body */}
@@ -92,16 +69,21 @@ export function PublicProfile({
           <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">
             {fullName}
           </h1>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-chart-2/10 text-chart-2 text-[10px] font-mono font-semibold rounded-full select-none">
+          <a
+            href={`https://${username}.memact.com`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-chart-2/10 hover:bg-chart-2/15 text-chart-2 text-[10px] font-mono font-semibold rounded-full transition-colors"
+          >
             <span className="w-1.5 h-1.5 bg-chart-2 rounded-full animate-pulse" />
             {username}.memact.com
-          </div>
+          </a>
         </div>
 
         {/* entries stream */}
         <div className="space-y-5">
           <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
-            {previewMode === 'public' ? 'Public Details' : 'Shared with Friends'}
+            Public Details
           </div>
 
           <div className="space-y-4">
@@ -124,15 +106,6 @@ export function PublicProfile({
                       <span>By {entry.contributor === 'You' ? 'you' : entry.contributor}</span>
                       <span>•</span>
                       <span>{entry.time}</span>
-                      
-                      {entry.visibility === 'Friends' && (
-                        <>
-                          <span>•</span>
-                          <span className="text-chart-3 font-semibold flex items-center gap-1">
-                            <Users size={11} /> Friends Only
-                          </span>
-                        </>
-                      )}
                     </div>
 
                     {entry.starred && (
@@ -149,7 +122,7 @@ export function PublicProfile({
           {/* Credentials details card */}
           <div className="bg-card border border-border p-5 rounded-sm shadow-xs space-y-2.5 mt-8">
             <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 select-none">
-              Verified Address Metadata
+              Verified Profile
             </div>
             
             <div className="flex justify-between items-center text-xs py-1.5 border-b border-border/40">
@@ -157,14 +130,16 @@ export function PublicProfile({
               <span className="font-medium text-foreground">{fullName}</span>
             </div>
 
-            <div className="flex justify-between items-center text-xs py-1.5 border-b border-border/40">
-              <span className="font-semibold text-muted-foreground">Identity Protocol</span>
-              <span className="font-mono text-muted-foreground/60 text-[10px]">sha256:memact_{username}_auth</span>
-            </div>
-
             <div className="flex justify-between items-center text-xs py-1.5">
-              <span className="font-semibold text-muted-foreground">Personal Link</span>
-              <span className="font-medium text-foreground font-mono text-[11px]">{username}.memact.com</span>
+              <span className="font-semibold text-muted-foreground">Address</span>
+              <a
+                href={`https://${username}.memact.com`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-chart-2 hover:underline font-semibold"
+              >
+                {username}.memact.com
+              </a>
             </div>
           </div>
         </div>
