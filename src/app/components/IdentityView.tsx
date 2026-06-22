@@ -65,7 +65,8 @@ export function IdentityView({
   // Active visibility dropdown ID
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
 
-  const [newEntryVisibility, setNewEntryVisibility] = useState<'Public' | 'Friends' | 'Private'>('Private');
+  const [contributorsExpanded, setContributorsExpanded] = useState(false);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`${username}.memact.com`);
@@ -118,7 +119,7 @@ export function IdentityView({
 
   // Permitted Apps
   const [permittedApps, setPermittedApps] = useState<PermittedApp[]>([
-    { id: 'p1', name: 'Cursor IDE', scope: 'Private & Friends entries', time: 'Active 5m ago' },
+    { id: 'p1', name: 'Cursor IDE', scope: 'Private entries', time: 'Active 5m ago' },
     { id: 'p2', name: 'Claude AI', scope: 'Public entries', time: 'Active 2h ago' },
     { id: 'p3', name: 'Cal.com', scope: 'Public entries', time: 'Active yesterday' }
   ]);
@@ -177,7 +178,7 @@ export function IdentityView({
       id: Math.random().toString(),
       content: text,
       contributor: 'You',
-      visibility: newEntryVisibility,
+      visibility: 'Private',
       starred: false,
       time: 'Just now'
     };
@@ -188,7 +189,6 @@ export function IdentityView({
       ...prev
     ]);
     setNewEntryText('');
-    setNewEntryVisibility('Private');
   };
 
   const handleDeleteEntry = (id: string) => {
@@ -206,7 +206,7 @@ export function IdentityView({
     onUpdateEntries(entries.map(e => e.id === id ? { ...e, starred: !e.starred } : e));
   };
 
-  const updateVisibility = (id: string, visibility: 'Private' | 'Friends' | 'Public') => {
+  const updateVisibility = (id: string, visibility: 'Private' | 'Public') => {
     onUpdateEntries(entries.map(e => e.id === id ? { ...e, visibility } : e));
   };
 
@@ -237,7 +237,7 @@ export function IdentityView({
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 w-full md:w-auto">
             {/* Logo Row */}
             <div className="flex items-center justify-between w-full md:w-auto">
-              <button onClick={onBack} className="hover:opacity-75 transition-opacity shrink-0">
+              <button onClick={onBack} className="-ml-1 md:-ml-1.5 hover:opacity-75 transition-opacity shrink-0">
                 <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[38px] md:h-[46px] w-auto" />
               </button>
               
@@ -368,11 +368,18 @@ export function IdentityView({
           <section className="space-y-8 animate-[fadeIn_0.3s_ease-out]">
             <div className="pb-3 border-b border-border">
               <h1 className="text-xl font-bold tracking-tight text-foreground">Myself</h1>
-              <span className="text-xs text-muted-foreground font-semibold font-mono">{username}.memact.com</span>
+              <a
+                href={`https://${username}.memact.com`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground hover:text-foreground font-semibold font-mono hover:underline transition-colors"
+              >
+                {username}.memact.com
+              </a>
             </div>
 
             {/* Input to add entries directly */}
-            <form onSubmit={handleAddCustomEntry} className="flex flex-col sm:flex-row gap-2.5 bg-card border border-border p-2 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.01)] items-stretch sm:items-center w-full">
+            <form onSubmit={handleAddCustomEntry} className="flex gap-2.5 bg-card border border-border p-2 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.01)] items-center w-full">
               <div className="relative flex-1 w-full">
                 <input
                   type="text"
@@ -391,64 +398,8 @@ export function IdentityView({
                   </button>
                 )}
               </div>
-
-              <div className="flex items-center gap-2 justify-end sm:justify-start w-full sm:w-auto shrink-0 relative">
-                {/* Form visibility selector */}
-                <div className="relative inline-block w-full sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDropdownId(activeDropdownId === 'form-add' ? null : 'form-add');
-                    }}
-                    className="flex items-center justify-between gap-1.5 px-3.5 py-2.5 text-xs font-bold border border-border bg-secondary hover:bg-secondary/60 rounded-sm text-muted-foreground hover:text-foreground transition-all cursor-pointer w-full sm:w-44 shrink-0"
-                  >
-                    <span className="flex items-center gap-2">
-                      {newEntryVisibility === 'Public' && <Globe size={12} className="text-chart-2" />}
-                      {newEntryVisibility === 'Friends' && <Users size={12} className="text-chart-3" />}
-                      {newEntryVisibility === 'Private' && <Lock size={12} className="text-muted-foreground/60" />}
-                      <span>{newEntryVisibility}</span>
-                    </span>
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform duration-200 ${
-                        activeDropdownId === 'form-add' ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-
-                  {activeDropdownId === 'form-add' && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setActiveDropdownId(null)} />
-                      <div className="absolute right-0 sm:left-0 mt-1.5 w-full sm:w-44 bg-popover text-popover-foreground border border-border rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.05)] py-1 z-50 animate-[fadeIn_0.15s_ease-out] select-none">
-                        {[
-                          { value: 'Public', label: 'Public (Everyone)', icon: <Globe size={11} className="text-chart-2" /> },
-                          { value: 'Friends', label: 'Friends (Connections)', icon: <Users size={11} className="text-chart-3" /> },
-                          { value: 'Private', label: 'Private (Just me)', icon: <Lock size={11} className="text-muted-foreground/60" /> }
-                        ].map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => {
-                              setNewEntryVisibility(opt.value as any);
-                              setActiveDropdownId(null);
-                            }}
-                            className={`w-full text-left px-2.5 py-1.5 text-[10px] font-bold flex items-center gap-2 hover:bg-secondary transition-colors ${
-                              newEntryVisibility === opt.value ? 'bg-secondary text-foreground font-extrabold' : 'text-muted-foreground font-medium'
-                            }`}
-                          >
-                            {opt.icon}
-                            <span>{opt.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Hidden submit button to allow submitting by hitting Enter key */}
-                <button type="submit" className="hidden" />
-              </div>
+              {/* Hidden submit button to allow submitting by hitting Enter key */}
+              <button type="submit" className="hidden" />
             </form>
 
             {/* The Notebook Stream */}
@@ -502,7 +453,6 @@ export function IdentityView({
                               <div className="absolute left-0 mt-1.5 w-44 bg-popover text-popover-foreground border border-border rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.05)] py-1 z-50 animate-[fadeIn_0.15s_ease-out] select-none">
                                 {[
                                   { value: 'Public', label: 'Public (Everyone)', icon: <Globe size={11} className="text-chart-2" /> },
-                                  { value: 'Friends', label: 'Friends (Connections)', icon: <Users size={11} className="text-chart-3" /> },
                                   { value: 'Private', label: 'Private (Just me)', icon: <Lock size={11} className="text-muted-foreground/60" /> }
                                 ].map((opt) => (
                                   <button
@@ -588,22 +538,16 @@ export function IdentityView({
                         </span>
                       </div>
                       <p className="text-muted-foreground mt-1 leading-relaxed">
-                        Anyone visiting <span className="font-mono text-foreground font-semibold">{username}.memact.com</span> can read these.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-secondary/10 border border-border/40 rounded-sm">
-                    <Users size={14} className="text-chart-3 mt-0.5 shrink-0" />
-                    <div>
-                      <div className="font-bold text-foreground flex items-center gap-2">
-                        Friends 
-                        <span className="text-[10px] bg-secondary border border-border px-1.5 py-0.25 rounded-full font-mono text-muted-foreground">
-                          {entries.filter(e => e.visibility === 'Friends').length} entries
-                        </span>
-                      </div>
-                      <p className="text-muted-foreground mt-1 leading-relaxed">
-                        Only verified connections (like Spotify) can view these when they authenticate.
+                        Anyone visiting{' '}
+                        <a
+                          href={`https://${username}.memact.com`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-foreground font-semibold hover:underline"
+                        >
+                          {username}.memact.com
+                        </a>{' '}
+                        can read these.
                       </p>
                     </div>
                   </div>
@@ -663,13 +607,31 @@ export function IdentityView({
               {/* Contributor List summary */}
               <div className="space-y-3 pt-6 border-t border-border/40">
                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Active Contributors</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(contributorStats).map(([name, count]) => (
-                    <div key={name} className="p-3 bg-secondary/15 border border-border/45 rounded-sm flex justify-between items-center text-xs">
-                      <span className="font-semibold text-foreground">{name === 'You' ? 'you' : name}</span>
-                      <span className="text-muted-foreground font-mono text-[10px]">{count} entries</span>
-                    </div>
-                  ))}
+                <div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(() => {
+                      const contributorList = Object.entries(contributorStats);
+                      const displayed = (!contributorsExpanded && contributorList.length > 5)
+                        ? contributorList.slice(0, 5)
+                        : contributorList;
+                      return displayed.map(([name, count]) => (
+                        <div key={name} className="p-3 bg-secondary/15 border border-border/45 rounded-sm flex justify-between items-center text-xs">
+                          <span className="font-semibold text-foreground">{name === 'You' ? 'you' : name}</span>
+                          <span className="text-muted-foreground font-mono text-[10px]">{count} entries</span>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                  {Object.keys(contributorStats).length > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setContributorsExpanded(!contributorsExpanded)}
+                      className="mt-3 text-[10px] font-bold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors select-none"
+                    >
+                      <span>{contributorsExpanded ? 'Show less' : `Show all (${Object.keys(contributorStats).length})`}</span>
+                      <ChevronDown size={12} className={`transition-transform duration-200 ${contributorsExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -677,16 +639,31 @@ export function IdentityView({
               <div className="space-y-3 pt-6 border-t border-border/40">
                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-semibold">Activity History</h3>
                 <div className="space-y-2.5">
-                  {history.map((h) => (
-                    <div key={h.id} className="p-3 bg-secondary/10 border border-border/30 rounded-sm text-[11px] flex justify-between items-start gap-4">
-                      <span className={`leading-relaxed font-semibold ${
-                        h.status === 'rejected' ? 'text-muted-foreground/80 line-through' : h.status === 'revoked' ? 'text-chart-3/80' : 'text-foreground/90'
-                      }`}>
-                        {h.action}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground/50 shrink-0 mt-0.5 tabular-nums">{h.time}</span>
-                    </div>
-                  ))}
+                  {(() => {
+                    const displayed = (!historyExpanded && history.length > 5)
+                      ? history.slice(0, 5)
+                      : history;
+                    return displayed.map((h) => (
+                      <div key={h.id} className="p-3 bg-secondary/10 border border-border/30 rounded-sm text-[11px] flex justify-between items-start gap-4">
+                        <span className={`leading-relaxed font-semibold ${
+                          h.status === 'rejected' ? 'text-muted-foreground/80 line-through' : h.status === 'revoked' ? 'text-chart-3/80' : 'text-foreground/90'
+                        }`}>
+                          {h.action}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/50 shrink-0 mt-0.5 tabular-nums">{h.time}</span>
+                      </div>
+                    ));
+                  })()}
+                  {history.length > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setHistoryExpanded(!historyExpanded)}
+                      className="mt-2 text-[10px] font-bold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors select-none"
+                    >
+                      <span>{historyExpanded ? 'Show less' : `Show all (${history.length})`}</span>
+                      <ChevronDown size={12} className={`transition-transform duration-200 ${historyExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -717,72 +694,18 @@ export function IdentityView({
 
                   <div>
                     <label className="text-[11px] font-semibold text-muted-foreground block mb-1">Personal Address</label>
-                    <div className="text-xs font-mono text-foreground bg-secondary px-3 py-2.5 border border-border rounded-sm">
-                      {username}.memact.com
+                    <div className="text-xs font-mono bg-secondary px-3 py-2.5 border border-border rounded-sm">
+                      <a
+                        href={`https://${username}.memact.com`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground hover:underline"
+                      >
+                        {username}.memact.com
+                      </a>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Contributor List summary */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Active Contributors</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(contributorStats).map(([name, count]) => (
-                    <div key={name} className="p-3 bg-secondary/15 border border-border/45 rounded-sm flex justify-between items-center text-xs">
-                      <span className="font-semibold text-foreground">{name === 'You' ? 'you' : name}</span>
-                      <span className="text-muted-foreground font-mono text-[10px]">{count} entries</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Contributions Timeline */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-semibold">Activity History</h3>
-                <div className="space-y-2.5">
-                  {history.map((h) => (
-                    <div key={h.id} className="p-3 bg-secondary/10 border border-border/30 rounded-sm text-[11px] flex justify-between items-start gap-4">
-                      <span className={`leading-relaxed font-semibold ${
-                        h.status === 'rejected' ? 'text-muted-foreground/80 line-through' : h.status === 'revoked' ? 'text-chart-3/80' : 'text-foreground/90'
-                      }`}>
-                        {h.action}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground/50 shrink-0 mt-0.5 tabular-nums">{h.time}</span>
-                    </div>
-                  ))}
-                </div>
-
-              {/* Contributor List summary */}
-              <div className="space-y-3 pt-6 border-t border-border/40">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Active Contributors</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(contributorStats).map(([name, count]) => (
-                    <div key={name} className="p-3 bg-secondary/15 border border-border/45 rounded-sm flex justify-between items-center text-xs">
-                      <span className="font-semibold text-foreground">{name === 'You' ? 'you' : name}</span>
-                      <span className="text-muted-foreground font-mono text-[10px]">{count} entries</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Contributions Timeline */}
-              <div className="space-y-3 pt-6 border-t border-border/40">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-semibold">Activity History</h3>
-                <div className="space-y-2.5">
-                  {history.map((h) => (
-                    <div key={h.id} className="p-3 bg-secondary/10 border border-border/30 rounded-sm text-[11px] flex justify-between items-start gap-4">
-                      <span className={`leading-relaxed font-semibold ${
-                        h.status === 'rejected' ? 'text-muted-foreground/80 line-through' : h.status === 'revoked' ? 'text-chart-3/80' : 'text-foreground/90'
-                      }`}>
-                        {h.action}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground/50 shrink-0 mt-0.5 tabular-nums">{h.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               </div>
             </div>
           </section>
