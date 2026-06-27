@@ -149,7 +149,12 @@ export default function App() {
               currentSubdomain = parts[0];
             }
             
-            if (currentSubdomain !== profile.username) {
+            if (currentSubdomain && currentSubdomain !== profile.username) {
+              // User is logged in but viewing a different subdomain
+              return;
+            }
+            
+            if (!currentSubdomain) {
               const protocol = window.location.protocol;
               const port = window.location.port ? `:${window.location.port}` : '';
               const baseDomain = hostname.includes('localhost') ? 'localhost' : 'memact.com';
@@ -225,8 +230,8 @@ export default function App() {
         }
         loadUserData(session.user.id);
       } else {
-        setUsername('sujay');
-        setFullName('Sujay Sudhir');
+        setUsername('john');
+        setFullName('John Doe');
         setEntries([]);
         setPendingEntries([]);
         setPage('landing');
@@ -260,6 +265,7 @@ export default function App() {
       {page === 'address' && (
         <AddressPage
           username={username}
+          fullName={fullName}
           isDark={isDark}
           onToggleDark={toggleDark}
           onSignOut={async () => {

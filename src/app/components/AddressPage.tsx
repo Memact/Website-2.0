@@ -23,6 +23,7 @@ type FilterTab = "approved" | "pending" | "rejected" | "self" | "archived";
 
 export interface AddressPageProps {
   username: string;
+  fullName: string;
   isDark: boolean;
   onToggleDark: () => void;
   onSignOut: () => void;
@@ -30,8 +31,13 @@ export interface AddressPageProps {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function timeLabel(c: Claim): string {
-  if (c.contributor_type === "user") return "Added by you \u00b7 " + formatTimeAgo(c.created_at);
+function timeLabel(c: Claim, fullName: string): string {
+  if (c.contributor_type === "user") {
+    if (c.contributor_name === "You" || c.contributor_name === fullName) {
+      return "Added by you \u00b7 " + formatTimeAgo(c.created_at);
+    }
+    return `Added by ${c.contributor_name || "another user"} \u00b7 ` + formatTimeAgo(c.created_at);
+  }
   return formatTimeAgo(c.created_at);
 }
 
@@ -41,7 +47,7 @@ function sourceLabel(c: Claim): string {
 
 // ─── Cards ───────────────────────────────────────────────────────────────────
 
-function ApprovedCard({ claim, onClick }: { claim: Claim; onClick: () => void }) {
+function ApprovedCard({ claim, fullName, onClick }: { claim: Claim; fullName: string; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -51,7 +57,7 @@ function ApprovedCard({ claim, onClick }: { claim: Claim; onClick: () => void })
         <p className="text-sm font-medium text-foreground leading-snug">{claim.content}</p>
         <MoreHorizontal size={14} className="text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5" />
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">{timeLabel(claim)}</p>
+      <p className="mt-3 text-xs text-muted-foreground">{timeLabel(claim, fullName)}</p>
     </button>
   );
 }
@@ -316,7 +322,7 @@ const TABS: { id: FilterTab; label: string }[] = [
   { id: "archived", label: "Archived"   },
 ];
 
-export function AddressPage({ username, isDark, onToggleDark, onSignOut }: AddressPageProps) {
+export function AddressPage({ username, fullName, isDark, onToggleDark, onSignOut }: AddressPageProps) {
   const [claims, setClaims]     = useState<Claim[]>([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState<string | null>(null);
@@ -339,7 +345,7 @@ export function AddressPage({ username, isDark, onToggleDark, onSignOut }: Addre
     if (tab === "approved") return c.status === "approved";
     if (tab === "pending")  return c.status === "pending";
     if (tab === "rejected") return c.status === "rejected";
-    if (tab === "self")     return c.contributor_type === "user" && c.status === "approved";
+    if (tab === "self")     return c.contributor_type === "user" && c.status === "approved" && (c.contributor_name === "You" || c.contributor_name === fullName);
     if (tab === "archived") return c.status === "archived";
     return false;
   });
@@ -399,7 +405,7 @@ export function AddressPage({ username, isDark, onToggleDark, onSignOut }: Addre
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 md:px-6 h-[60px] flex items-center justify-between gap-4">
-          <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto -ml-1 md:ml-0" />
+          <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto ml-[-8px]" />
           <div className="flex items-center gap-3">
             <button onClick={onToggleDark} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle theme">
               {isDark ? <Sun size={14} /> : <Moon size={14} />}
@@ -479,7 +485,7 @@ export function AddressPage({ username, isDark, onToggleDark, onSignOut }: Addre
               if (tab === "pending")  return <PendingCard  key={c.id} claim={c} onApprove={() => approve(c.id)} onReject={() => reject(c.id)} />;
               if (tab === "archived") return <ArchivedCard key={c.id} claim={c} onRestore={() => restore(c.id)} onClick={() => setSelected(c)} />;
               if (tab === "rejected") return <RejectedCard key={c.id} claim={c} onClick={() => setSelected(c)} />;
-              return <ApprovedCard key={c.id} claim={c} onClick={() => setSelected(c)} />;
+              return <ApprovedCard key={c.id} claim={c} fullName={fullName} onClick={() => setSelected(c)} />;
             })}
           </div>
         )}
