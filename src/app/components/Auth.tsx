@@ -179,40 +179,27 @@ export function Auth({
       {/* Auth Panel */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-sm bg-card/40 border border-border p-8 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
-          {/* Last Used Native Banner */}
+          {/* Last Used Suggested Divider */}
           {lastUsed && (
-            <div className="mb-5 p-3.5 bg-secondary/80 border border-border rounded-sm flex items-center justify-between text-xs font-semibold text-foreground transition-all">
-              <span className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-chart-2 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-chart-2"></span>
-                </span>
-                <span>
-                  Welcome back! Last login: <strong className="capitalize">{lastUsed === 'native' ? 'email' : lastUsed}</strong>
-                </span>
+            <div className="flex items-center gap-3 mb-6 select-none">
+              <div className="flex-1 h-px bg-border/40" />
+              <span className="text-[11px] font-medium text-muted-foreground/60">
+                Suggested:{' '}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (lastUsed === 'google' || lastUsed === 'github') {
+                      handleOAuth(lastUsed);
+                    } else {
+                      setIsLogin(true);
+                    }
+                  }}
+                  className="text-foreground hover:underline font-semibold capitalize cursor-pointer transition-colors"
+                >
+                  Continue with {lastUsed === 'native' ? 'email' : lastUsed}
+                </button>
               </span>
-              {(lastUsed === 'google' || lastUsed === 'github') ? (
-                <button
-                  type="button"
-                  disabled={loading}
-                  onClick={() => handleOAuth(lastUsed as 'google' | 'github')}
-                  className="text-[10px] font-extrabold bg-foreground text-background px-2.5 py-1 rounded-sm uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all shrink-0 cursor-pointer"
-                >
-                  Quick Sign in
-                </button>
-              ) : isLogin ? (
-                <span className="text-[9px] font-extrabold bg-foreground text-background px-2 py-0.5 rounded-full uppercase tracking-wider scale-90 shrink-0">
-                  Active
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsLogin(true)}
-                  className="text-[10px] font-extrabold bg-foreground text-background px-2.5 py-1 rounded-sm uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all shrink-0 cursor-pointer"
-                >
-                  Sign In
-                </button>
-              )}
+              <div className="flex-1 h-px bg-border/40" />
             </div>
           )}
 
