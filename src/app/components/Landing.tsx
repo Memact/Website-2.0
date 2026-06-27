@@ -47,52 +47,52 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
 
   const sections = [
     {
-      title: "Take control of what applications know about you.",
-      subtitle: "Instead of letting every app build a fragmented, hidden profile of who you are, establish your own personal address to accumulate and manage your identity context."
+      title: "Let your identity live in one place.",
+      subtitle: ""
     },
     {
-      title: "Applications constantly learn things about you.",
-      subtitle: "As you interact with different services, they observe your habits. A fitness tracker learns you run, a reading app learns you read essays, and messaging apps notice your personality."
+      title: "Apps learn things about you.",
+      subtitle: "A fitness app learns you work out. A reading app learns you read essays. A friend knows you are funny."
     },
     {
-      title: "This knowledge is completely fragmented.",
-      subtitle: "Today, each application locks its observations inside its own database. The tools you use cannot coordinate, forcing you to repeatedly teach every new service who you are."
+      title: "None of it connects.",
+      subtitle: "Everything stays in separate places. The apps do not talk to each other."
     },
     {
-      title: "Consolidate your identity context under one address.",
-      subtitle: "By claiming your address—like sujay.memact.com—you create a unified network destination where all application observations can be directed."
+      title: "Bring it together.",
+      subtitle: "Get your own address like sujay.memact.com. Everything flows to one place."
     },
     {
-      title: "Connected apps suggest updates to your profile.",
-      subtitle: "When a service learns something new, it doesn't store it silently. Instead, it proposes the observation as a context suggestion to your personal address."
+      title: "Apps suggest updates.",
+      subtitle: "When apps learn something new, they send a suggestion to your address."
     },
     {
-      title: "You review and approve every observation.",
-      subtitle: "You retain final authority. If a fitness app suggests 'Works out regularly,' you can approve it, modify it, or reject it entirely on the spot."
+      title: "You decide on the spot.",
+      subtitle: "Fitness App suggests: 'Works out regularly.' You approve or reject it."
     },
     {
-      title: "Observation approved, identity claimed.",
-      subtitle: "Activity is not identity. Only when you approve an app's observation does it convert into a permanent claim and become part of your portable profile."
+      title: "It belongs to you.",
+      subtitle: "Approved things are saved under your personal address."
     },
     {
-      title: "Define your own visibility and access rules.",
-      subtitle: "You decide how your claims are shared. Keep them entirely private to yourself, share them with trusted friends, or make them public on your address page."
+      title: "Choose who sees what.",
+      subtitle: "Make things public, share them with friends, or keep them only for yourself."
     },
     {
-      title: "New applications request access seamlessly.",
-      subtitle: "When you sign up for a new service, it doesn't need to ask you standard questions or request access to your entire profile. It simply requests the specific context it needs to run."
+      title: "A new app arrives.",
+      subtitle: "A music app wants to know what music to play. It does not get access to your whole profile."
     },
     {
-      title: "Memact shares only the specific allowed context.",
-      subtitle: "If a music player requests your current activity context, Memact shares only the 'Works out regularly' claim. Your essays, reading habits, and private notes remain hidden."
+      title: "Memact shares only what is needed.",
+      subtitle: "It sees 'Works out regularly' is approved. It hides your essays and jokes."
     },
     {
-      title: "Applications personalize your experience instantly.",
-      subtitle: "The music app receives the verified claim and plays workout music immediately, delivering a custom experience from the first second without collecting unnecessary data."
+      title: "The app adapts.",
+      subtitle: "The music app plays workout music instantly, without knowing anything else about you."
     },
     {
-      title: "Your portable identity grows with you.",
-      subtitle: "As you continue to use apps, your address accumulates new context naturally. You maintain absolute visibility and control over what the internet knows about you."
+      title: "Your profile grows on its own.",
+      subtitle: "Approved observations are added automatically over time as you use apps."
     }
   ];
 

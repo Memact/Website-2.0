@@ -192,16 +192,13 @@ function ClaimSheet({ claim, onClose, onUpdate, onDelete }: {
   };
 
   return (
-    <>
-      <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
       <div
         ref={sheetRef}
-        className="fixed z-50 bg-card border border-border overflow-y-auto
-          bottom-0 left-0 right-0 rounded-t-2xl p-6 max-h-[85vh]
-          md:bottom-auto md:top-0 md:left-auto md:right-0 md:w-80 md:h-full md:rounded-none md:rounded-l-2xl"
+        className="relative z-50 w-full max-w-sm bg-card border border-border rounded-xl shadow-lg p-5 sm:p-6 max-h-[90vh] overflow-y-auto"
         style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
       >
-        <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5 md:hidden" />
 
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1 min-w-0 pr-2">
@@ -262,7 +259,7 @@ function ClaimSheet({ claim, onClose, onUpdate, onDelete }: {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

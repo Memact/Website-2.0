@@ -78,6 +78,12 @@ export default function App() {
             .maybeSingle();
             
           if (profile) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user.id === profile.id) {
+              // The user owns this subdomain, let loadUserData render the dashboard
+              return;
+            }
+
             setUsername(profile.username);
             setFullName(profile.full_name);
             
@@ -124,15 +130,34 @@ export default function App() {
 
     const loadUserData = async (userId: string) => {
       try {
-        const { data: profile, error } = await supabase
+        if (!supabase) return;
+        const { data: profile } = await supabase
           .from('memact_profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle();
 
-        if (error) throw error;
-
         if (profile) {
+          if (typeof window !== 'undefined') {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            let currentSubdomain = '';
+            
+            if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+              if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') currentSubdomain = parts[0];
+            } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
+              currentSubdomain = parts[0];
+            }
+            
+            if (currentSubdomain !== profile.username) {
+              const protocol = window.location.protocol;
+              const port = window.location.port ? `:${window.location.port}` : '';
+              const baseDomain = hostname.includes('localhost') ? 'localhost' : 'memact.com';
+              window.location.href = `${protocol}//${profile.username}.${baseDomain}${port}`;
+              return;
+            }
+          }
+          
           setUsername(profile.username);
           setFullName(profile.full_name);
 
