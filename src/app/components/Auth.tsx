@@ -179,30 +179,6 @@ export function Auth({
       {/* Auth Panel */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-sm bg-card/40 border border-border p-8 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
-          {/* Last Used Suggested Divider */}
-          {lastUsed && (
-            <div className="flex items-center gap-3 mb-6 select-none">
-              <div className="flex-1 h-px bg-border/40" />
-              <span className="text-[11px] font-medium text-muted-foreground/60">
-                Suggested:{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (lastUsed === 'google' || lastUsed === 'github') {
-                      handleOAuth(lastUsed);
-                    } else {
-                      setIsLogin(true);
-                    }
-                  }}
-                  className="text-foreground hover:underline font-semibold capitalize cursor-pointer transition-colors"
-                >
-                  Continue with {lastUsed === 'native' ? 'email' : lastUsed}
-                </button>
-              </span>
-              <div className="flex-1 h-px bg-border/40" />
-            </div>
-          )}
-
           {/* Tabs */}
           <div className="flex border-b border-border mb-6">
             <button
@@ -222,6 +198,17 @@ export function Auth({
               Create account
             </button>
           </div>
+
+          {/* Last Used Divider */}
+          {lastUsed && (
+            <div className="flex items-center gap-3 mb-5 select-none">
+              <div className="flex-1 h-px bg-border/60" />
+              <span className="text-xs font-medium text-muted-foreground/60">
+                last login: <span className="text-foreground capitalize">{lastUsed === 'native' ? 'email' : lastUsed}</span>
+              </span>
+              <div className="flex-1 h-px bg-border/60" />
+            </div>
+          )}
 
           {/* Social Logins */}
           <div className="space-y-2 mb-5">
