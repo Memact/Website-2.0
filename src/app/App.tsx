@@ -64,11 +64,13 @@ export default function App() {
 
     const loadUserData = async (userId: string) => {
       try {
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('memact_profiles')
           .select('*')
           .eq('id', userId)
-          .single();
+          .maybeSingle();
+
+        if (error) throw error;
 
         if (profile) {
           setUsername(profile.username);
@@ -183,7 +185,7 @@ export default function App() {
       )}
       {page === 'public'   && (
         <PublicProfile
-          onBack={() => setPage('identity')}
+          onBack={() => setPage('address')}
           onClaim={() => {
             setPage('auth');
             setAuthMode('signup');
@@ -203,13 +205,13 @@ export default function App() {
               setIsClaimed(true);
               setUsername(userHandle || 'alex');
               setFullName(email ? email.split('@')[0] : 'Alex Chen');
-              setPage('identity');
+              setPage('address');
             } else {
               setIsClaimed(false);
               if (authMode === 'signup') {
                 setPage('onboarding');
               } else {
-                setPage('identity');
+                setPage('address');
               }
             }
           }}
@@ -277,7 +279,7 @@ export default function App() {
               initialEntries.push({ id: 'e2', content: prefs.trim(), contributor: 'You', visibility: prefsVis, starred: false, time: 'Just now' });
             }
             setEntries(initialEntries);
-            setPage('identity');
+            setPage('address');
           }}
           isDark={isDark}
           onToggleDark={toggleDark}
