@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Landing }       from './components/Landing';
-import { IdentityView }  from './components/IdentityView';
+import { Landing }      from './components/Landing';
+import { AddressPage }  from './components/AddressPage';
 import { PublicProfile } from './components/PublicProfile';
 import { Auth }          from './components/Auth';
 import { Onboarding }    from './components/Onboarding';
@@ -24,7 +24,7 @@ export interface PendingEntry {
   created_at: string;
 }
 
-type Page = 'landing' | 'identity' | 'public' | 'auth' | 'onboarding';
+type Page = 'landing' | 'address' | 'public' | 'auth' | 'onboarding';
 
 export default function App() {
   const [page,   setPage]   = useState<Page>('landing');
@@ -107,7 +107,7 @@ export default function App() {
               }))
             );
           }
-          setPage('identity');
+          setPage('address');
         } else {
           setPage('onboarding');
         }
@@ -140,8 +140,8 @@ export default function App() {
       } else {
         setUsername('sujay');
         setFullName('Sujay Sudhir');
-        // Reset to empty entries when logged out
         setEntries([]);
+        setPendingEntries([]);
         setPage('landing');
       }
     });
@@ -170,25 +170,15 @@ export default function App() {
           onToggleDark={toggleDark}
         />
       )}
-      {page === 'identity' && (
-        <IdentityView
-          onBack={() => {
-            if (supabase) {
-              supabase.auth.signOut();
-            }
-            setPage('landing');
-          }}
-          onPublicView={() => setPage('public')}
+      {page === 'address' && (
+        <AddressPage
+          username={username}
           isDark={isDark}
           onToggleDark={toggleDark}
-          username={username}
-          fullName={fullName}
-          entries={entries}
-          onUpdateEntries={setEntries}
-          pendingEntries={pendingEntries}
-          onUpdatePendingEntries={setPendingEntries}
-          isClaimed={isClaimed}
-          onUpgradeToManaged={() => setIsClaimed(false)}
+          onSignOut={async () => {
+            if (supabase) await supabase.auth.signOut();
+            setPage('landing');
+          }}
         />
       )}
       {page === 'public'   && (
