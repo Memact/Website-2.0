@@ -52,6 +52,66 @@ export default function App() {
     }
   }, [page, authMode]);
 
+  // Subdomain routing detection
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hostname = window.location.hostname;
+    const parts = hostname.split('.');
+    let subdomain = '';
+    
+    if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+      if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+        subdomain = parts[0];
+      }
+    } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
+      subdomain = parts[0];
+    }
+
+    if (subdomain) {
+      const fetchPublicSubdomain = async () => {
+        try {
+          if (!supabase) return;
+          const { data: profile } = await supabase
+            .from('memact_profiles')
+            .select('*')
+            .eq('username', subdomain)
+            .maybeSingle();
+            
+          if (profile) {
+            setUsername(profile.username);
+            setFullName(profile.full_name);
+            
+            const { data: contributions } = await supabase
+              .from('memact_contributions')
+              .select('*')
+              .eq('user_id', profile.id)
+              .eq('status', 'approved')
+              .eq('visibility', 'public')
+              .order('created_at', { ascending: false });
+              
+            if (contributions) {
+              setEntries(
+                contributions.map((c: any) => ({
+                  id: c.id,
+                  content: c.content,
+                  contributor: c.contributor_name,
+                  visibility: 'Public',
+                  starred: c.is_starred,
+                  time: formatTimeAgo(c.created_at)
+                }))
+              );
+            }
+            setPage('public');
+          }
+        } catch (err) {
+          console.error("Error loading subdomain profile:", err);
+        }
+      };
+      
+      fetchPublicSubdomain();
+    }
+  }, []);
+
   // Global Record States
   const [username, setUsername] = useState('sujay');
   const [fullName, setFullName] = useState('Sujay Sudhir');

@@ -172,7 +172,7 @@ export function Auth({
         >
           <ArrowLeft size={13} /> Back
         </button>
-        <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[50px] w-auto" />
+        <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto" />
         <div className="w-[60px]" /> {/* Spacer to center the logo */}
       </nav>
 

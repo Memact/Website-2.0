@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, MoreHorizontal, Plus, Moon, Sun } from "lucide-react";
 import textLogoLight from "../../imports/text_logo_nobg_light.png";
 import textLogoDark  from "../../imports/text_logo_nobg_dark.png";
@@ -401,9 +401,8 @@ export function AddressPage({ username, isDark, onToggleDark, onSignOut }: Addre
 
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between gap-4">
-          <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-8 w-auto" />
-          <span className="text-xs font-mono text-muted-foreground hidden sm:block">{username}.memact.com</span>
+        <div className="max-w-4xl mx-auto px-4 md:px-6 h-[60px] flex items-center justify-between gap-4">
+          <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto -ml-1 md:ml-0" />
           <div className="flex items-center gap-3">
             <button onClick={onToggleDark} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle theme">
               {isDark ? <Sun size={14} /> : <Moon size={14} />}
@@ -423,7 +422,7 @@ export function AddressPage({ username, isDark, onToggleDark, onSignOut }: Addre
       </div>
 
       {/* Filter tabs */}
-      <div className="sticky top-14 z-20 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="sticky top-[60px] z-20 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="flex items-center overflow-x-auto scrollbar-none h-11">
             {TABS.map(t => (
