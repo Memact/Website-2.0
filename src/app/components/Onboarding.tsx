@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Check, Shield, Terminal, Settings, Globe, CheckCircle2, User, Lock, Users } from 'lucide-react';
 import textLogoLight from '../../imports/text_logo_nobg_light.png';
 import textLogoDark  from '../../imports/text_logo_nobg_dark.png';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../../supabase';
 
 interface OnboardingProps {
   onBack: () => void;
