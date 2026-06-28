@@ -76,7 +76,7 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
     },
     {
       title: "Choose who sees what.",
-      subtitle: "Make things public, share them with friends, or keep them only for yourself."
+      subtitle: "Make things public, or keep them strictly private."
     },
     {
       title: "A new app arrives.",
@@ -352,7 +352,7 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
                 <div className="border border-border p-2.5 rounded-sm bg-background flex items-center justify-between">
                   <span className="text-[10px] sm:text-xs font-bold text-foreground">Works out regularly.</span>
                   <span className="text-[8px] font-bold border border-border bg-secondary px-2 py-0.5 rounded-sm text-foreground flex items-center gap-1 select-none">
-                    <Users size={9} className="text-muted-foreground" /> Friends
+                    <Globe size={9} className="text-muted-foreground" /> Public
                   </span>
                 </div>
                 <div className="border border-border p-2.5 rounded-sm bg-background flex items-center justify-between">

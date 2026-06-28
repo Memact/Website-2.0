@@ -10,9 +10,9 @@ interface OnboardingProps {
     username: string,
     fullName: string,
     nowFocus: string,
-    focusVisibility: 'Public' | 'Friends' | 'Private',
+    focusVisibility: 'Public' | 'Private',
     preferences: string,
-    prefsVisibility: 'Public' | 'Friends' | 'Private'
+    prefsVisibility: 'Public' | 'Private'
   ) => void;
   isDark: boolean;
   onToggleDark: () => void;
@@ -29,8 +29,8 @@ export function Onboarding({ onBack, onComplete, isDark, onToggleDark, initialEm
   // Loading states for Step 3
   const [simState, setSimState] = useState<'idle' | 'connecting' | 'success'>('idle');
 
-  const [focusVisibility, setFocusVisibility] = useState<'Public' | 'Friends' | 'Private'>('Public');
-  const [prefsVisibility, setPrefsVisibility] = useState<'Public' | 'Friends' | 'Private'>('Public');
+  const [focusVisibility, setFocusVisibility] = useState<'Public' | 'Private'>('Public');
+  const [prefsVisibility, setPrefsVisibility] = useState<'Public' | 'Private'>('Public');
   const [openDropdown, setOpenDropdown] = useState<'focus-vis' | 'prefs-vis' | null>(null);
 
   const [checkingUsername, setCheckingUsername] = useState(false);
@@ -236,7 +236,6 @@ export function Onboarding({ onBack, onComplete, isDark, onToggleDark, initialEm
                           className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold border border-border rounded-full hover:bg-secondary transition-all cursor-pointer text-muted-foreground hover:text-foreground"
                         >
                           {focusVisibility === 'Public' && <Globe size={10} className="text-chart-2" />}
-                          {focusVisibility === 'Friends' && <Users size={10} className="text-chart-3" />}
                           {focusVisibility === 'Private' && <Lock size={10} className="text-muted-foreground/60" />}
                           <span>{focusVisibility}</span>
                         </button>
@@ -247,7 +246,6 @@ export function Onboarding({ onBack, onComplete, isDark, onToggleDark, initialEm
                             <div className="absolute left-0 mt-1 w-44 bg-popover text-popover-foreground border border-border rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.05)] py-1 z-50 select-none">
                               {[
                                 { value: 'Public', label: 'Public (Everyone)', icon: <Globe size={11} className="text-chart-2" /> },
-                                { value: 'Friends', label: 'Friends (Connections)', icon: <Users size={11} className="text-chart-3" /> },
                                 { value: 'Private', label: 'Private (Just me)', icon: <Lock size={11} className="text-muted-foreground/60" /> }
                               ].map((opt) => (
                                 <button
@@ -298,7 +296,6 @@ export function Onboarding({ onBack, onComplete, isDark, onToggleDark, initialEm
                           className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold border border-border rounded-full hover:bg-secondary transition-all cursor-pointer text-muted-foreground hover:text-foreground"
                         >
                           {prefsVisibility === 'Public' && <Globe size={10} className="text-chart-2" />}
-                          {prefsVisibility === 'Friends' && <Users size={10} className="text-chart-3" />}
                           {prefsVisibility === 'Private' && <Lock size={10} className="text-muted-foreground/60" />}
                           <span>{prefsVisibility}</span>
                         </button>

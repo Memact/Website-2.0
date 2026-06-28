@@ -25,7 +25,7 @@ interface Suggestion {
   avatarColor: string;
   title: string;
   reason: string;
-  visibility: 'Public' | 'Friends' | 'Private';
+  visibility: 'Public' | 'Private';
   value: string;
 }
 
@@ -87,7 +87,7 @@ export function IdentityView({
     avatarColor: 'bg-muted text-muted-foreground border-muted',
     title: p.content,
     reason: formatTimeAgo(p.created_at),
-    visibility: toUiVisibility(p.visibility) as 'Public' | 'Friends' | 'Private',
+    visibility: toUiVisibility(p.visibility) as 'Public' | 'Private',
     value: p.content
   }));
 
@@ -247,7 +247,7 @@ export function IdentityView({
             {/* Core User Intent Tabs */}
             <div className="flex items-center gap-4 select-none overflow-x-auto whitespace-nowrap scrollbar-none h-[40px] md:h-[65px] border-t border-border/30 md:border-t-0 pt-1.5 md:pt-0">
               {[
-                { id: 'inbox', label: 'Inbox', badge: inbox.length },
+                { id: 'inbox', label: 'Suggestions', badge: inbox.length },
                 { id: 'record', label: 'You' },
                 { id: 'access', label: 'Privacy' },
                 { id: 'settings', label: 'Settings' },
@@ -295,14 +295,14 @@ export function IdentityView({
         {view === 'inbox' && (
           <section className="space-y-6 animate-[fadeIn_0.3s_ease-out]">
             <div className="pb-2 border-b border-border flex items-center justify-between">
-              <h1 className="text-xl font-bold tracking-tight text-foreground">Inbox</h1>
+              <h1 className="text-xl font-bold tracking-tight text-foreground">Suggestions</h1>
             </div>
 
             <div className="space-y-4">
               {inbox.length === 0 ? (
                 <div className="p-8 border border-dashed border-border rounded-sm text-center bg-secondary/15 py-16 select-none animate-[fadeIn_0.4s_ease-out]">
                   <Check className="mx-auto text-chart-2 mb-3 bg-chart-2/10 p-2 rounded-full border border-chart-2/25 animate-[pulse_2s_infinite]" size={36} />
-                  <h3 className="text-sm font-bold text-foreground mb-1">Your inbox is clear</h3>
+                  <h3 className="text-sm font-bold text-foreground mb-1">Your suggestions are clear</h3>
                 </div>
               ) : (
                 inbox.map((item) => (
@@ -395,7 +395,7 @@ export function IdentityView({
             <div className="space-y-4">
               {entries.length === 0 ? (
                 <div className="p-8 border border-dashed border-border rounded-sm text-center bg-secondary/15 py-12 text-xs text-muted-foreground italic select-none">
-                  Your notebook stream is empty. Add something above.
+                  Your memory registry is empty. Add something above.
                 </div>
               ) : (
                 entries.map((entry) => (
@@ -428,7 +428,6 @@ export function IdentityView({
                             className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold border border-border rounded-full hover:bg-secondary transition-all cursor-pointer text-muted-foreground hover:text-foreground"
                           >
                             {entry.visibility === 'Public' && <Globe size={11} className="text-chart-2" />}
-                            {entry.visibility === 'Friends' && <Users size={11} className="text-chart-3" />}
                             {entry.visibility === 'Private' && <Lock size={11} className="text-muted-foreground/60" />}
                             <span>{entry.visibility}</span>
                           </button>
@@ -507,14 +506,14 @@ export function IdentityView({
                 }`}
               >
                 {isPublic ? <Eye size={12} /> : <EyeOff size={12} />}
-                <span>{isPublic ? 'Public link is active' : 'Notebook link is hidden'}</span>
+                <span>{isPublic ? 'Public link is active' : 'Memory registry is hidden'}</span>
               </button>
             </div>
 
             <div className="space-y-6">
               {/* Coherent Visibility System Card */}
               <div className="bg-card border border-border p-5 rounded-sm space-y-4">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Who can see my notebook?</h3>
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Who can see my memory registry?</h3>
                 
                 <div className="space-y-3.5 text-xs">
                   <div className="flex items-start gap-3 p-3 bg-secondary/10 border border-border/40 rounded-sm">

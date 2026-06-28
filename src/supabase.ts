@@ -14,16 +14,14 @@ export function requireSupabase() {
   return supabase;
 }
 
-export function toDbVisibility(uiVis: 'Public' | 'Friends' | 'Private'): 'public' | 'friends' | 'private' {
+export function toDbVisibility(uiVis: 'Public' | 'Private'): 'public' | 'private' {
   if (uiVis === 'Public') return 'public';
-  if (uiVis === 'Friends') return 'friends';
   return 'private';
 }
 
-export function toUiVisibility(dbVis: string): 'Public' | 'Friends' | 'Private' {
+export function toUiVisibility(dbVis: string): 'Public' | 'Private' {
   const clean = String(dbVis || '').toLowerCase();
   if (clean === 'public') return 'Public';
-  if (clean === 'friends') return 'Friends';
   return 'Private';
 }
 
