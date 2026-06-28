@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, ShieldCheck, Globe, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Globe, Sun, Moon } from 'lucide-react';
 import { Entry } from '../App';
 import textLogoLight from "../../imports/text_logo_nobg_light.png";
 import textLogoDark  from "../../imports/text_logo_nobg_dark.png";
@@ -33,21 +33,16 @@ export function PublicProfile({
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 md:px-6 h-[60px] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onBack}
-              className="mr-2 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-semibold border border-border px-2.5 py-1 rounded-lg hover:bg-secondary/40"
-            >
-              <ArrowLeft size={12} /> Portal
-            </button>
-            <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto ml-[-8px]" />
-          </div>
+          <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto" />
           <div className="flex items-center gap-3">
-            <button onClick={onToggleDark} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle theme">
+            <button onClick={onToggleDark} className="text-muted-foreground hover:text-foreground transition-colors mr-1" aria-label="Toggle theme">
               {isDark ? <Sun size={14} /> : <Moon size={14} />}
             </button>
-            <button onClick={onClaim} className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
-              Claim yours
+            <button
+              onClick={onBack}
+              className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors border border-border px-3 py-1.5 rounded-lg hover:bg-secondary/40 flex items-center gap-1.5"
+            >
+              <ArrowLeft size={12} /> Back
             </button>
           </div>
         </div>
@@ -122,18 +117,13 @@ export function PublicProfile({
           </div>
         </div>
 
-        {/* Trust badge & claim yours CTA */}
-        <div className="py-8 border-t border-border/80 flex flex-col items-center gap-6">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground/50 select-none">
-            <ShieldCheck size={14} className="text-accent" />
-            <span>Secured and served via Memact protocol</span>
-          </div>
-
-          <div className="text-center space-y-3">
-            <p className="text-xs text-muted-foreground font-medium">Tired of reintroducing yourself to the world?</p>
+        {/* Claim yours CTA */}
+        <div className="py-8 border-t border-border/80 flex flex-col items-start gap-4">
+          <div className="space-y-3">
+            <p className="text-xs text-muted-foreground font-semibold">Tired of reintroducing yourself to the world?</p>
             <button
               onClick={onClaim}
-              className="flex items-center gap-2 text-xs bg-foreground text-background px-5 py-2.5 font-bold hover:opacity-85 transition-opacity rounded-lg shadow-xs animate-pulse"
+              className="flex items-center gap-2 text-xs bg-foreground text-background px-5 py-2.5 font-bold hover:opacity-85 transition-opacity rounded-lg shadow-xs"
             >
               Get your personal address <ArrowRight size={12} />
             </button>

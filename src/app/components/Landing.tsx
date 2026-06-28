@@ -125,11 +125,8 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
 
   const handleRestart = useCallback(() => {
     const container = document.getElementById('main-scroll-container');
-    const isMobilePortrait = window.innerWidth < 768 && window.innerHeight > window.innerWidth;
-    if (container && isMobilePortrait) {
+    if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, []);
 
@@ -488,8 +485,8 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 h-[60px] bg-background/90 backdrop-blur-sm border-b border-border select-none">
-        <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto -ml-1 md:ml-0" />
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-16 h-[60px] bg-background/90 backdrop-blur-sm border-b border-border select-none">
+        <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto" />
         <div className="flex items-center gap-3.5 md:gap-6">
           <button onClick={onToggleDark} className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer" aria-label="Toggle dark mode">
             {isDark ? <Sun size={14} /> : <Moon size={14} />}
@@ -512,10 +509,10 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
       </nav>
 
       {/* Split screen scrolling container */}
-      <main id="main-scroll-container" className="flex-1 flex flex-col md:flex-row relative pt-[60px] h-[calc(100vh-60px)] landscape:h-auto md:h-auto md:overflow-y-visible landscape:overflow-y-visible overflow-y-auto snap-y snap-mandatory landscape:snap-none scroll-smooth">
+      <main id="main-scroll-container" className="flex-1 flex flex-col md:flex-row relative mt-[60px] h-[calc(100vh-60px)] overflow-y-auto snap-y snap-mandatory scroll-smooth bg-background">
         
         {/* Left Visual Area (Sticky) - hidden on mobile */}
-        <div className="hidden md:flex w-full md:w-1/2 h-[calc(100vh-60px)] sticky top-[60px] items-center justify-center p-12 border-r border-border/40 bg-background/50 backdrop-blur-sm z-30">
+        <div className="hidden md:flex w-full md:w-1/2 h-[calc(100vh-60px)] sticky top-0 items-center justify-center p-12 border-r border-border/40 bg-background/50 backdrop-blur-sm z-30">
           <div className="w-full max-w-sm h-[380px] max-h-[calc(100vh-100px)] bg-card border border-border rounded-sm shadow-[0_8px_32px_rgba(0,0,0,0.01)] flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300">
             {renderVisualFrame()}
           </div>
@@ -527,8 +524,8 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
             <section
               key={index}
               data-index={index}
-              className={`scroll-section h-[calc(100vh-60px)] landscape:h-auto landscape:min-h-[calc(100vh-60px)] landscape:py-6 md:min-h-[calc(100vh-60px)] md:h-auto flex flex-col justify-center items-center text-center md:text-left md:items-start px-6 md:px-16 py-0 transition-all duration-500 ease-out border-b border-border/10 last:border-b-0 snap-start snap-always landscape:snap-none ${
-                activeSection === index ? 'opacity-100 scale-100 translate-y-0' : 'opacity-25 scale-95 translate-y-4 md:opacity-25 md:scale-100 md:translate-y-0'
+              className={`scroll-section h-[calc(100vh-60px)] shrink-0 flex flex-col justify-center items-center text-center md:text-left md:items-start px-6 md:px-16 py-0 transition-all duration-700 ease-out border-b border-border/10 last:border-b-0 snap-start snap-always ${
+                activeSection === index ? 'opacity-100 scale-100 translate-y-0' : 'opacity-25 scale-95 translate-y-4'
               }`}
             >
               <div className="max-w-md landscape:max-w-2xl md:max-w-md space-y-3 landscape:space-y-0 w-full flex flex-col landscape:flex-row items-center md:items-start landscape:justify-between landscape:gap-6">
@@ -574,7 +571,7 @@ export function Landing({ onNavigate, isDark, onToggleDark }: LandingProps) {
       </main>
 
       {/* Footer */}
-      <footer className="px-8 py-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 text-xs select-none bg-background shrink-0">
+      <footer className="px-6 md:px-16 py-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 text-xs select-none bg-background shrink-0">
         <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[36px] w-auto opacity-35" />
         <div className="flex gap-6 justify-center">
           {['Privacy', 'Terms', 'Contact'].map((item) => (

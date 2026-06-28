@@ -5,6 +5,9 @@ import { PublicProfile } from './components/PublicProfile';
 import { Auth }          from './components/Auth';
 import { Onboarding }    from './components/Onboarding';
 import { supabase, toUiVisibility, toDbVisibility, formatTimeAgo } from '../supabase';
+import { Sun, Moon } from 'lucide-react';
+import textLogoLight from '../imports/text_logo_nobg_light.png';
+import textLogoDark  from '../imports/text_logo_nobg_dark.png';
 
 export interface Entry {
   id: string;
@@ -68,6 +71,7 @@ export default function App() {
     }
 
     if (subdomain) {
+      setDetectedSubdomain(subdomain);
       const fetchPublicSubdomain = async () => {
         try {
           if (!supabase) return;
@@ -108,9 +112,12 @@ export default function App() {
               );
             }
             setPage('public');
+          } else {
+            setPage('not-found');
           }
         } catch (err) {
           console.error("Error loading subdomain profile:", err);
+          setPage('not-found');
         }
       };
       
@@ -119,6 +126,7 @@ export default function App() {
   }, []);
 
   // Global Record States
+  const [detectedSubdomain, setDetectedSubdomain] = useState('');
   const [username, setUsername] = useState('john');
   const [fullName, setFullName] = useState('John Doe');
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -385,6 +393,67 @@ export default function App() {
           onToggleDark={toggleDark}
           initialEmail={initialEmail}
         />
+      )}
+      {page === 'not-found' && (
+        <div
+          className="min-h-screen bg-background text-foreground flex flex-col justify-between"
+          style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
+        >
+          <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
+            <div className="max-w-4xl mx-auto px-4 md:px-6 h-[60px] flex items-center justify-between gap-4">
+              <img src={isDark ? textLogoDark : textLogoLight} alt="memact" className="h-[42px] md:h-[50px] w-auto" />
+              <button onClick={toggleDark} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle theme">
+                {isDark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
+            </div>
+          </header>
+
+          <main className="flex-1 flex flex-col items-center justify-center text-center px-4 max-w-md mx-auto space-y-6">
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold text-accent uppercase tracking-widest bg-accent/15 border border-accent/25 px-2.5 py-1 rounded-full">
+                404 Not Found
+              </span>
+              <h1 className="text-3xl font-extrabold tracking-tight mt-3">Address not claimed</h1>
+              <p className="font-mono text-sm text-muted-foreground font-semibold mt-1">
+                {detectedSubdomain}.memact.com
+              </p>
+            </div>
+
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-xs font-medium text-muted-foreground/80">
+              This personal address is currently unclaimed. You can claim it now and start controlling what apps know about you.
+            </p>
+
+            <div className="pt-2 w-full space-y-2">
+              <button
+                onClick={() => {
+                  setPage('auth');
+                  setAuthMode('signup');
+                  setInitialEmail('');
+                }}
+                className="w-full bg-foreground text-background py-3 text-xs font-bold hover:opacity-85 transition-opacity rounded-lg shadow-sm"
+              >
+                Claim {detectedSubdomain}.memact.com
+              </button>
+              <a
+                href="https://memact.com"
+                className="block text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors pt-2 underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Reset back to landing page
+                  setDetectedSubdomain('');
+                  setPage('landing');
+                }}
+              >
+                Go to Memact home
+              </a>
+            </div>
+          </main>
+
+          <footer className="max-w-4xl w-full mx-auto px-4 md:px-6 py-6 border-t border-border flex items-center justify-between shrink-0 select-none">
+            <span className="text-[10px] text-muted-foreground/50">© {new Date().getFullYear()} Memact. All rights reserved.</span>
+            <span className="text-[10px] text-muted-foreground/50 font-medium">Secured via Memact protocol</span>
+          </footer>
+        </div>
       )}
 
     </>
