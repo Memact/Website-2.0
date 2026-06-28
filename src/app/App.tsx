@@ -27,10 +27,10 @@ export interface PendingEntry {
   created_at: string;
 }
 
-type Page = 'landing' | 'address' | 'public' | 'auth' | 'onboarding';
+type Page = 'loading' | 'landing' | 'address' | 'public' | 'auth' | 'onboarding' | 'not-found';
 
 export default function App() {
-  const [page,   setPage]   = useState<Page>('landing');
+  const [page,   setPage]   = useState<Page>('loading');
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined' && window.matchMedia) {
       const isLightPreferred = window.matchMedia('(prefers-color-scheme: light)').matches;
@@ -41,6 +41,7 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [initialEmail, setInitialEmail] = useState('');
   const [isClaimed, setIsClaimed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Dynamic Document Title based on current page
   useEffect(() => {
@@ -52,78 +53,10 @@ export default function App() {
       document.title = 'Memact | Set up';
     } else if (page === 'public') {
       document.title = 'Memact | Profile';
+    } else if (page === 'loading') {
+      document.title = 'Memact | Loading';
     }
   }, [page, authMode]);
-
-  // Subdomain routing detection
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const hostname = window.location.hostname;
-    const parts = hostname.split('.');
-    let subdomain = '';
-    
-    if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-      if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') {
-        subdomain = parts[0];
-      }
-    } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
-      subdomain = parts[0];
-    }
-
-    if (subdomain) {
-      setDetectedSubdomain(subdomain);
-      const fetchPublicSubdomain = async () => {
-        try {
-          if (!supabase) return;
-          const { data: profile } = await supabase
-            .from('memact_profiles')
-            .select('*')
-            .eq('username', subdomain)
-            .maybeSingle();
-            
-          if (profile) {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session && session.user.id === profile.id) {
-              // The user owns this subdomain, let loadUserData render the dashboard
-              return;
-            }
-
-            setUsername(profile.username);
-            setFullName(profile.full_name);
-            
-            const { data: contributions } = await supabase
-              .from('memact_contributions')
-              .select('*')
-              .eq('user_id', profile.id)
-              .eq('status', 'approved')
-              .eq('visibility', 'public')
-              .order('created_at', { ascending: false });
-              
-            if (contributions) {
-              setEntries(
-                contributions.map((c: any) => ({
-                  id: c.id,
-                  content: c.content,
-                  contributor: c.contributor_name,
-                  visibility: 'Public',
-                  starred: c.is_starred,
-                  time: formatTimeAgo(c.created_at)
-                }))
-              );
-            }
-            setPage('public');
-          } else {
-            setPage('not-found');
-          }
-        } catch (err) {
-          console.error("Error loading subdomain profile:", err);
-          setPage('not-found');
-        }
-      };
-      
-      fetchPublicSubdomain();
-    }
-  }, []);
 
   // Global Record States
   const [detectedSubdomain, setDetectedSubdomain] = useState('');
@@ -132,103 +65,177 @@ export default function App() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [pendingEntries, setPendingEntries] = useState<PendingEntry[]>([]);
 
-  // Auth session listener
-  useEffect(() => {
-    if (!supabase) return;
+  const loadUserData = async (userId: string) => {
+    try {
+      if (!supabase) return;
+      const { data: profile } = await supabase
+        .from('memact_profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
 
-    const loadUserData = async (userId: string) => {
-      try {
-        if (!supabase) return;
-        const { data: profile } = await supabase
-          .from('memact_profiles')
-          .select('*')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (profile) {
-          if (typeof window !== 'undefined') {
-            const hostname = window.location.hostname;
-            const parts = hostname.split('.');
-            let currentSubdomain = '';
-            
-            if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-              if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') currentSubdomain = parts[0];
-            } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
-              currentSubdomain = parts[0];
-            }
-            
-            if (currentSubdomain && currentSubdomain !== profile.username) {
-              // User is logged in but viewing a different subdomain
-              return;
-            }
-            
-            if (!currentSubdomain) {
-              const protocol = window.location.protocol;
-              const port = window.location.port ? `:${window.location.port}` : '';
-              const baseDomain = hostname.includes('localhost') ? 'localhost' : 'memact.com';
-              window.location.href = `${protocol}//${profile.username}.${baseDomain}${port}`;
-              return;
-            }
+      if (profile) {
+        if (typeof window !== 'undefined') {
+          const hostname = window.location.hostname;
+          const parts = hostname.split('.');
+          let currentSubdomain = '';
+          
+          if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+            if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') currentSubdomain = parts[0];
+          } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
+            currentSubdomain = parts[0];
           }
           
-          setUsername(profile.username);
-          setFullName(profile.full_name);
-
-          const { data: dbContributions } = await supabase
-            .from('memact_contributions')
-            .select('*')
-            .eq('user_id', userId)
-            .in('status', ['approved', 'pending'])
-            .order('created_at', { ascending: false });
-
-          if (dbContributions) {
-            const approved = dbContributions.filter((c: any) => c.status === 'approved' && c.content?.trim());
-            const pending  = dbContributions.filter((c: any) => c.status === 'pending'  && c.content?.trim());
-
-            setEntries(
-              approved.map((c: any) => ({
-                id: c.id,
-                content: c.content,
-                contributor: c.contributor_name,
-                visibility: toUiVisibility(c.visibility),
-                starred: c.is_starred,
-                time: formatTimeAgo(c.created_at)
-              }))
-            );
-
-            setPendingEntries(
-              pending.map((c: any) => ({
-                id: c.id,
-                content: c.content,
-                contributor_name: c.contributor_name,
-                contributor_type: c.contributor_type,
-                visibility: c.visibility,
-                created_at: c.created_at
-              }))
-            );
+          if (currentSubdomain && currentSubdomain !== profile.username) {
+            // Logged in user is viewing a different subdomain
+            return;
           }
-          setPage('address');
-        } else {
-          setPage('onboarding');
+          
+          if (!currentSubdomain) {
+            const protocol = window.location.protocol;
+            const port = window.location.port ? `:${window.location.port}` : '';
+            const baseDomain = hostname.includes('localhost') ? 'localhost' : 'memact.com';
+            window.location.href = `${protocol}//${profile.username}.${baseDomain}${port}`;
+            return;
+          }
         }
-      } catch (err) {
-        console.error("Error loading user data from Supabase:", err);
+        
+        setUsername(profile.username);
+        setFullName(profile.full_name);
+
+        const { data: dbContributions } = await supabase
+          .from('memact_contributions')
+          .select('*')
+          .eq('user_id', userId)
+          .in('status', ['approved', 'pending'])
+          .order('created_at', { ascending: false });
+
+        if (dbContributions) {
+          const approved = dbContributions.filter((c: any) => c.status === 'approved' && c.content?.trim());
+          const pending  = dbContributions.filter((c: any) => c.status === 'pending'  && c.content?.trim());
+
+          setEntries(
+            approved.map((c: any) => ({
+              id: c.id,
+              content: c.content,
+              contributor: c.contributor_name,
+              visibility: toUiVisibility(c.visibility),
+              starred: c.is_starred,
+              time: formatTimeAgo(c.created_at)
+            }))
+          );
+
+          setPendingEntries(
+            pending.map((c: any) => ({
+              id: c.id,
+              content: c.content,
+              contributor_name: c.contributor_name,
+              contributor_type: c.contributor_type,
+              visibility: c.visibility,
+              created_at: c.created_at
+            }))
+          );
+        }
+        setPage('address');
+      } else {
+        setPage('onboarding');
+      }
+    } catch (err) {
+      console.error("Error loading user data from Supabase:", err);
+      setPage('landing');
+    }
+  };
+
+  // Subdomain & Auth initialization
+  useEffect(() => {
+    const initializeApp = async () => {
+      // 1. Detect subdomain
+      let subdomain = '';
+      if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        const parts = hostname.split('.');
+        if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+          if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+            subdomain = parts[0];
+          }
+        } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'memact') {
+          subdomain = parts[0];
+        }
+      }
+
+      if (subdomain) {
+        setDetectedSubdomain(subdomain);
+      }
+
+      if (!supabase) {
+        setPage('landing');
+        return;
+      }
+
+      // 2. Fetch session
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+
+      if (subdomain) {
+        // Subdomain flow
+        try {
+          const { data: profile } = await supabase
+            .from('memact_profiles')
+            .select('*')
+            .eq('username', subdomain)
+            .maybeSingle();
+
+          if (profile) {
+            // Is the logged in user the owner of this subdomain?
+            if (session && session.user.id === profile.id) {
+              await loadUserData(session.user.id);
+            } else {
+              setUsername(profile.username);
+              setFullName(profile.full_name);
+              
+              const { data: contributions } = await supabase
+                .from('memact_contributions')
+                .select('*')
+                .eq('user_id', profile.id)
+                .eq('status', 'approved')
+                .eq('visibility', 'public')
+                .order('created_at', { ascending: false });
+                
+              if (contributions) {
+                setEntries(
+                  contributions.map((c: any) => ({
+                    id: c.id,
+                    content: c.content,
+                    contributor: c.contributor_name,
+                    visibility: 'Public',
+                    starred: c.is_starred,
+                    time: formatTimeAgo(c.created_at)
+                  }))
+                );
+              }
+              setPage('public');
+            }
+          } else {
+            setPage('not-found');
+          }
+        } catch (err) {
+          console.error("Error loading subdomain profile:", err);
+          setPage('not-found');
+        }
+      } else {
+        // Main domain flow
+        if (session) {
+          await loadUserData(session.user.id);
+        } else {
+          setPage('landing');
+        }
       }
     };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        const provider = session.user.app_metadata.provider;
-        if (provider === 'email') {
-          localStorage.setItem('memact_last_auth', 'native');
-        } else if (provider) {
-          localStorage.setItem('memact_last_auth', provider);
-        }
-        loadUserData(session.user.id);
-      }
-    });
+    initializeApp();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session);
       if (session) {
         const provider = session.user.app_metadata.provider;
         if (provider === 'email') {
@@ -242,7 +249,7 @@ export default function App() {
         setFullName('John Doe');
         setEntries([]);
         setPendingEntries([]);
-        setPage('landing');
+        setPage(prev => (prev === 'public' || prev === 'not-found') ? prev : 'landing');
       }
     });
 
@@ -259,6 +266,25 @@ export default function App() {
 
   return (
     <>
+      {page === 'loading' && (
+        <div className="min-h-screen bg-[#00011B] flex flex-col items-center justify-center select-none" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              {/* Outer pulsing ring */}
+              <div className="absolute inset-0 rounded-full border border-accent/30 animate-ping opacity-75" />
+              {/* Inner loading ring */}
+              <div className="absolute inset-1 rounded-full border-t-2 border-r-2 border-accent animate-spin" />
+              {/* Central brand mark */}
+              <div className="w-8 h-8 rounded-full bg-accent/10 border border-accent/25 flex items-center justify-center font-bold text-accent text-xs">
+                m
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60 tracking-wider font-semibold animate-pulse uppercase">
+              serving address
+            </div>
+          </div>
+        </div>
+      )}
       {page === 'landing'  && (
         <Landing
           onNavigate={(target, tab, email) => {
@@ -284,7 +310,19 @@ export default function App() {
       )}
       {page === 'public'   && (
         <PublicProfile
-          onBack={() => setPage('address')}
+          onBack={async () => {
+            if (isLoggedIn) {
+              const { data: { session } } = await supabase.auth.getSession();
+              if (session) {
+                setPage('loading');
+                await loadUserData(session.user.id);
+              } else {
+                setPage('landing');
+              }
+            } else {
+              setPage('landing');
+            }
+          }}
           onClaim={() => {
             setPage('auth');
             setAuthMode('signup');
@@ -295,6 +333,7 @@ export default function App() {
           username={username}
           fullName={fullName}
           entries={entries}
+          isLoggedIn={isLoggedIn}
         />
       )}
       {page === 'auth'     && (

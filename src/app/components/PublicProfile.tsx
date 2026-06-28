@@ -11,6 +11,7 @@ interface PublicProfileProps {
   username: string;
   fullName: string;
   entries: Entry[];
+  isLoggedIn: boolean;
 }
 
 export function PublicProfile({
@@ -21,6 +22,7 @@ export function PublicProfile({
   username,
   fullName,
   entries,
+  isLoggedIn,
 }: PublicProfileProps) {
   // Filter entries based on visibility settings (only public)
   const visibleEntries = entries.filter((e) => e.visibility === 'Public');
@@ -42,7 +44,7 @@ export function PublicProfile({
               onClick={onBack}
               className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors border border-border px-3 py-1.5 rounded-lg hover:bg-secondary/40 flex items-center gap-1.5"
             >
-              <ArrowLeft size={12} /> Back
+              <ArrowLeft size={12} /> {isLoggedIn ? 'Back' : 'Home'}
             </button>
           </div>
         </div>
